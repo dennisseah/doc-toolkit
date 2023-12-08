@@ -8,6 +8,12 @@ from common.settings import Settings
 async def analyze(
     settings: Settings, sas_url: str, model="prebuilt-layout"
 ) -> fr.AnalyzeResult:
+    """Analyze a document.
+
+    :param settings: Settings object.
+    :param sas_url: SAS URL to the document.
+    :model: form recognizer model.
+    """
     credential = AzureKeyCredential(settings.azure_form_recognizer_key)
 
     async with fr_aio.DocumentAnalysisClient(

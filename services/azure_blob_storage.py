@@ -56,6 +56,7 @@ async def upload_blob(
     :param container_name: Name of the container.
     :param blob_name: Name of the blob.
     :param data: Data to upload.
+    :param overwrite: Overwrite the blob if it exists.
     """
     async with BlobServiceClient.from_connection_string(
         settings.azure_storage_connection_string
