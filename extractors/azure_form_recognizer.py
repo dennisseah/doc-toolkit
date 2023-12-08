@@ -89,11 +89,10 @@ def get_tables(fr_result: fr.AnalyzeResult) -> list[DocTable]:
     return tables
 
 
-async def extract(
-    cfg: Settings, sas_url: str, discard_roles: list[ParagraphRole] = []
+def format_result(
+    fr_result: fr.AnalyzeResult, discard_roles: list[ParagraphRole]
 ) -> str:
     content = []
-    fr_result = await analyze(cfg, sas_url)
     tables = get_tables(fr_result)
 
     def in_table(paragraph: fr.DocumentParagraph) -> DocTable | None:
@@ -114,3 +113,10 @@ async def extract(
                     content.append(paragraph.content)
 
     return "\n\n".join(content)
+
+
+async def extract(
+    settings: Settings, sas_url: str, discard_roles: list[ParagraphRole] = []
+) -> str:
+    fr_result = await analyze(settings, sas_url)
+    return format_result(fr_result, discard_roles)
