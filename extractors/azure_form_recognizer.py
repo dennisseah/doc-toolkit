@@ -1,11 +1,11 @@
+from typing import Literal
+
 import azure.ai.formrecognizer as fr
 from pydantic import BaseModel
 from tabulate import tabulate
 
 from common.settings import Settings
 from services.azure_form_recognizer import analyze
-
-ROLES_DISCARD = ["pageHeader", "pageFooter", "pageNumber"]
 
 # Extract textual content from a document
 # Tables will be added in place in the page and formatted in markdown format
@@ -14,6 +14,10 @@ ROLES_DISCARD = ["pageHeader", "pageFooter", "pageNumber"]
 # | -------- | -------- |
 # | Cell 1   | Cell 2   |
 # | Cell 3   | Cell 4   |
+
+
+class ParagraphRole(BaseModel):
+    role: Literal["pageHeader", "pageFooter", "pageNumber"]
 
 
 class DocTableCell(BaseModel):
@@ -85,7 +89,9 @@ def get_tables(fr_result: fr.AnalyzeResult) -> list[DocTable]:
     return tables
 
 
-async def extract(cfg: Settings, sas_url: str) -> str:
+async def extract(
+    cfg: Settings, sas_url: str, discard_roles: list[ParagraphRole] = []
+) -> str:
     content = []
     fr_result = await analyze(cfg, sas_url)
     tables = get_tables(fr_result)
@@ -98,7 +104,7 @@ async def extract(cfg: Settings, sas_url: str) -> str:
 
     if fr_result.paragraphs:
         for paragraph in fr_result.paragraphs:
-            if paragraph.role not in ROLES_DISCARD:
+            if paragraph.role not in discard_roles:
                 tbl = in_table(paragraph)
                 if tbl:
                     if not tbl.displayed:
