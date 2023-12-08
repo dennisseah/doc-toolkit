@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "doc-toolkit"
+version = "0.1.0"
+description = "document toolkit"
+authors = ["Dennis Seah <dennis.seah@microsoft.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-dotenv = "^1.0.0"
+azure-storage-blob = "^12.19.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pyright = "^1.1.339"
+pre-commit = "^3.5.0"
+black = "^23.11.0"
+ruff = "^0.1.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+select = ["E", "W", "F", "I", "TID"]
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
