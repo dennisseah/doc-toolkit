@@ -1,10 +1,37 @@
 from pydantic_settings import BaseSettings
 
 
-class Settings(BaseSettings):
-    azure_storage_connection_string: str
+class FormRecognizerSettings(BaseSettings):
     azure_form_recognizer_endpoint: str
     azure_form_recognizer_key: str
 
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+
+class AzureBlobStorageSettings(BaseSettings):
+    azure_storage_connection_string: str
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+
+class AzureOpenAISettings(BaseSettings):
+    openai_azure_endpoint: str
+    azure_openai_api_key: str
+    openai_api_version: str
+    deployment_model: str
+    openai_embedding_model: str
+    request_timeout: int = 30
+    max_retry_time_secs: int = 32
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+
+class Settings(FormRecognizerSettings, AzureBlobStorageSettings, AzureOpenAISettings):
     class Config:
         env_file = ".env"

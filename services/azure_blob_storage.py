@@ -6,20 +6,56 @@ from azure.storage.blob.aio import BlobServiceClient
 from common.settings import Settings
 
 
-async def get_sas_token(
+async def is_blob_exists(
+    settings: Settings, container_name: str, blob_name: str
+) -> bool:
+    """Checks if a blob exists in the storage account.
+
+    :param conn_str: Connection string to the storage account.
+    :param container_name: Name of the container.
+    :param blob_name: Name of the blob.
+    :return: True if the blob exists, False otherwise.
+    """
+    async with BlobServiceClient.from_connection_string(
+        settings.azure_storage_connection_string
+    ) as client:
+        blob_client = client.get_blob_client(container=container_name, blob=blob_name)
+        return await blob_client.exists()
+
+
+async def download_blob_as_str(settings: Settings, container_name: str, blob_name: str):
+    """Downloads a blob from the storage account.
+
+    :param conn_str: Connection string to the storage account.
+    :param container_name: Name of the container.
+    :param blob_name: Name of the blob.
+    :return: Blob contents.
+    """
+    async with BlobServiceClient.from_connection_string(
+        settings.azure_storage_connection_string
+    ) as client:
+        blob_client = client.get_blob_client(container=container_name, blob=blob_name)
+        downloader = await blob_client.download_blob(
+            max_concurrency=1, encoding="UTF-8"
+        )
+        return await downloader.readall()
+
+
+async def create_sas_url(
     settings: Settings,
     container_name: str,
     blob_name: str,
     permission: BlobSasPermissions = BlobSasPermissions(read=True),
     duration_seconds: int = 3600,
-):
-    """Get a blob from a container.
+) -> str:
+    """creates a sas URL for a blob
 
     :param conn_str: Connection string to the storage account.
     :param container_name: Name of the container.
     :param blob_name: Name of the blob.
     :param permission: Permission to grant.
     :param duration_seconds: SAS duration in seconds.
+    :return: SAS URL
     """
     async with BlobServiceClient.from_connection_string(
         settings.azure_storage_connection_string
