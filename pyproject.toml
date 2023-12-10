@@ -45,6 +45,11 @@ select = ["E", "W", "F", "I", "TID"]
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
 
+[tool.pytest.ini_options]
+markers = [
+    "unit: marks tests as unit tests"
+]
+
 [tool.coverage.run]
 omit = [
     "**/__init__.py",
