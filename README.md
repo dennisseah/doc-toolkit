@@ -20,3 +20,16 @@ document toolkit
 ## Samples
 
 Refer to [README.md](./samples/README.md)
+
+## Test cases
+
+1. Test cases are available at [`tests/`](./tests/)
+2. Click on Ctrl+shift+p for windows and search for Python: Discover tests
+3. Select path to discover as tests
+4. Tests can be debugged using test explorer on the left pane.
+
+## Test Coverage
+
+```sh
+pytest --cov-report term-missing --cov=. tests
+```

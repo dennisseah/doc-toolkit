@@ -38,10 +38,7 @@ class DocTable(BaseModel):
             return False
 
         def cmp(cell: DocTableCell, r2: list[fr.BoundingRegion] | None) -> bool:
-            if r2 is None:
-                return False
-
-            _r2 = r2[0]
+            _r2 = r2[0]  # type: ignore
             return cell.x == _r2.polygon[0].x and cell.y == _r2.polygon[0].y
 
         for cell in self.cells:
@@ -101,9 +98,11 @@ def format_result(
                 return tbl
         return None
 
+    drop_roles = [role.role for role in discard_roles]
+
     if fr_result.paragraphs:
         for paragraph in fr_result.paragraphs:
-            if paragraph.role not in discard_roles:
+            if paragraph.role not in drop_roles:
                 tbl = in_table(paragraph)
                 if tbl:
                     if not tbl.displayed:
@@ -118,5 +117,11 @@ def format_result(
 async def extract(
     settings: Settings, sas_url: str, discard_roles: list[ParagraphRole] = []
 ) -> str:
+    """Extract textual content from a document.
+
+    :param settings: Settings object
+    :param sas_url: SAS URL of the document
+    :param discard_roles: List of roles to discard
+    """
     fr_result = await analyze(settings, sas_url)
     return format_result(fr_result, discard_roles)
