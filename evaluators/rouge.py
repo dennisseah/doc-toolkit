@@ -4,6 +4,8 @@ from rouge_score.scoring import Score
 
 
 class RougeScores(BaseModel):
+    """ROUGE scores."""
+
     rouge1: float
     rouge2: float
     rougeL: float

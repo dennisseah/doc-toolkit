@@ -108,23 +108,3 @@ def get_embedding(settings: AzureOpenAISettings, text: str) -> CreateEmbeddingRe
     result = client.embeddings.create(input=text, model=settings.openai_embedding_model)
     logging.info("completed get_embedding")
     return result
-
-
-# async def main():
-#     from openai.types.chat import ChatCompletionSystemMessageParam
-
-#     settings = AzureOpenAISettings.model_validate({})
-#     response = await get_completion(
-#         settings=settings,
-#         messages=[
-#             ChatCompletionSystemMessageParam(role="system", content="Write a poem")
-#         ],
-#     )
-#     print(response)
-
-#     print(get_embedding(settings, "This is a test"))
-
-
-# if __name__ == "__main__":
-#     loop = asyncio.get_event_loop()
-#     loop.run_until_complete(main())

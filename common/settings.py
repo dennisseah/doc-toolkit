@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings
 
 
 class FormRecognizerSettings(BaseSettings):
+    """Settings for Azure Form Recognizer."""
+
     azure_form_recognizer_endpoint: str
     azure_form_recognizer_key: str
 
@@ -11,6 +13,8 @@ class FormRecognizerSettings(BaseSettings):
 
 
 class AzureBlobStorageSettings(BaseSettings):
+    """Settings for Azure Blob Storage."""
+
     azure_storage_connection_string: str
 
     class Config:
@@ -19,6 +23,8 @@ class AzureBlobStorageSettings(BaseSettings):
 
 
 class AzureOpenAISettings(BaseSettings):
+    """Settings for Azure OpenAI service."""
+
     openai_azure_endpoint: str
     azure_openai_api_key: str
     openai_api_version: str
