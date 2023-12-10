@@ -26,6 +26,7 @@ class AzureOpenAISettings(BaseSettings):
     openai_embedding_model: str
     request_timeout: int = 30
     max_retry_time_secs: int = 32
+    max_token_count: int | None = None
 
     class Config:
         env_file = ".env"

@@ -9,6 +9,7 @@ import services.ai.azure_openai as azure_openai
 import services.azure_blob_storage as blob_storage
 from common.settings import Settings
 from extractors.azure_form_recognizer import ParagraphRole, extract
+from services.ai.token_count import num_tokens_from_string
 
 DISCARD_ROLES = [
     ParagraphRole(role="pageHeader"),
@@ -77,6 +78,37 @@ async def save_textual_data(settings: Settings, data: str):
     )
 
 
+async def summarize(settings: Settings, data: str) -> Result | None:
+    response = await azure_openai.get_completion(
+        settings=settings,
+        messages=[
+            ChatCompletionSystemMessageParam(
+                role="system", content=PROMPT.replace("{{document}}", data)
+            )
+        ],
+        temperature=0,
+    )
+
+    if response is not None and response.choices:
+        choice = response.choices[0]
+        try:
+            response_text = json.loads(choice.message.content)  # type: ignore
+        except Exception as e:
+            logging.error(e)
+            return None
+
+        result = Result(**response_text)
+        result.metrics = [
+            RougeMetric(
+                result=point, scores=rouge_eval.evaluate(result=point, target=data)
+            )
+            for point in result.points
+        ]
+        return result
+
+    return None
+
+
 async def main():
     settings = Settings.model_validate({})
 
@@ -93,31 +125,21 @@ async def main():
             settings=settings, container_name=CONTAINER_NAME, blob_name=RESULT_BLOB_NAME
         )
 
+    if (
+        settings.max_token_count is not None
+        and num_tokens_from_string(string=data) > settings.max_token_count
+    ):
+        logging.error(
+            "Document is too long. Max token count: %s", settings.max_token_count
+        )
+        return
+
     # get ChatGPT to summarize the document
-    response = await azure_openai.get_completion(
-        settings=settings,
-        messages=[
-            ChatCompletionSystemMessageParam(
-                role="system", content=PROMPT.replace("{{document}}", data)
-            )
-        ],
-        temperature=0,
-    )
-
-    if response is not None and response.choices:
-        # TODO: check for valid JSON
-        response_text = json.loads(response.choices[0].message.content)  # type: ignore
-        result = Result(**response_text)
-        result.metrics = [
-            RougeMetric(
-                result=point, scores=rouge_eval.evaluate(result=point, target=data)
-            )
-            for point in result.points
-        ]
-        print(json.dumps(result.model_dump(), indent=4))
-
+    response = await summarize(settings=settings, data=data)
+    if response is None:
+        logging.error("Failed to get response from ChatGPT")
     else:
-        print("No response from GPT")
+        print(json.dumps(response.model_dump(), indent=4))
 
 
 if __name__ == "__main__":
