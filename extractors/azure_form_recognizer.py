@@ -93,23 +93,23 @@ def format_result(
     tables = get_tables(fr_result)
 
     def in_table(paragraph: fr.DocumentParagraph) -> DocTable | None:
-        for tbl in tables:
-            if tbl.in_range(paragraph.bounding_regions):
-                return tbl
-        return None
+        return next(
+            (tbl for tbl in tables if tbl.in_range(paragraph.bounding_regions)), None
+        )
 
     drop_roles = [role.role for role in discard_roles]
 
     if fr_result.paragraphs:
-        for paragraph in fr_result.paragraphs:
-            if paragraph.role not in drop_roles:
-                tbl = in_table(paragraph)
-                if tbl:
-                    if not tbl.displayed:
-                        content.append(tbl.format())
-                        tbl.displayed = True
-                else:
-                    content.append(paragraph.content)
+        for paragraph in filter(
+            lambda x: x.role not in drop_roles, fr_result.paragraphs
+        ):
+            tbl = in_table(paragraph)
+            if tbl:
+                if not tbl.displayed:
+                    content.append(tbl.format())
+                    tbl.displayed = True
+            else:
+                content.append(paragraph.content)
 
     return "\n\n".join(content)
 
