@@ -39,6 +39,19 @@ class AzureOpenAISettings(BaseSettings):
         extra = "ignore"
 
 
+class AzurePostgreSQLSettings(BaseSettings):
+    pghost: str
+    pguser: str
+    pgpassword: str
+    pgport: str
+    pgdatabase: str
+    pgssl: str
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+
 class Settings(FormRecognizerSettings, AzureBlobStorageSettings, AzureOpenAISettings):
     class Config:
         env_file = ".env"
