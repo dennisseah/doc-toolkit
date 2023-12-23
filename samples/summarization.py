@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 import evaluators.rouge as rouge_eval
 import services.ai.azure_openai as azure_openai
-import services.azure_blob_storage as blob_storage
+import services.storage.azure_blob_storage as blob_storage
 from common.settings import Settings
 from extractors.azure_form_recognizer import ParagraphRole, extract
 from services.ai.token_count import num_tokens_from_string

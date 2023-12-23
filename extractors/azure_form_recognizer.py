@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from tabulate import tabulate
 
 from common.settings import Settings
-from services.azure_form_recognizer import analyze
+from services.ai.azure_form_recognizer import analyze
 
 # Extract textual content from a document
 # Tables will be added in place in the page and formatted in markdown format
