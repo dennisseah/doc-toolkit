@@ -3,12 +3,18 @@
 #   Under Server parameters, search for `azure.extensions`
 #   Add UUID_OSSP and VECTOR
 
+from typing import Any, Callable
+
 import psycopg2
 
 from common.settings import AzurePostgreSQLSettings
 
 
 def connect_pgl(settings: AzurePostgreSQLSettings):
+    """Connect to the PostgreSQL database server
+
+    :param settings: Azure PostgreSQL settings
+    """
     conn_string = " ".join(
         [
             f"host={settings.pghost}",
@@ -18,44 +24,57 @@ def connect_pgl(settings: AzurePostgreSQLSettings):
             f"sslmode={settings.pgssl}",
         ]
     )
-    return psycopg2.connect(conn_string)
+    return psycopg2.connect(dsn=conn_string)
+
+
+def __runnable(settings: AzurePostgreSQLSettings, func: Callable[[Any, Any], Any]):
+    conn = connect_pgl(settings=settings)
+    cursor = None
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector")
+        cursor.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+
+        return func(conn, cursor)
+    finally:
+        if cursor:
+            cursor.close()
+        conn.close()
 
 
 def create_table(
     settings: AzurePostgreSQLSettings, tbl_name: str, pri_key: str, cols: str
 ):
-    conn = connect_pgl(settings=settings)
-    cursor = None
+    """Create a table in the PostgreSQL database
 
-    try:
-        cursor = conn.cursor()
+    :param settings: Azure PostgreSQL settings
+    :param tbl_name: table name
+    :param pri_key: primary key
+    :param cols: columns
+    """
 
-        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector")
-        cursor.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
-
+    def func(conn, cursor):
         cursor.execute(
             f"CREATE TABLE IF NOT EXISTS {tbl_name} ( {cols}, PRIMARY KEY ({pri_key}))"
         )
         conn.commit()
-    finally:
-        if cursor:
-            cursor.close()
-        conn.close()
+
+    __runnable(settings=settings, func=func)
 
 
 def drop_table(settings: AzurePostgreSQLSettings, tbl_name: str):
-    conn = connect_pgl(settings=settings)
-    cursor = None
+    """Drop a table in the PostgreSQL database
 
-    try:
-        cursor = conn.cursor()
+    :param settings: Azure PostgreSQL settings
+    :param tbl_name: table name
+    """
 
+    def func(conn, cursor):
         cursor.execute(f"DROP TABLE IF EXISTS {tbl_name}")
         conn.commit()
-    finally:
-        if cursor:
-            cursor.close()
-        conn.close()
+
+    __runnable(settings=settings, func=func)
 
 
 def cosine_similarity_search(
@@ -63,12 +82,16 @@ def cosine_similarity_search(
     tbl_name: str,
     query_embedding: list[float],
     limit: int = 100,
-):
-    conn = connect_pgl(settings=settings)
-    cursor = None
+) -> list[tuple[Any, ...]]:
+    """Cosine similarity search
 
-    try:
-        cursor = conn.cursor()
+    :param settings: Azure PostgreSQL settings
+    :param tbl_name: table name
+    :param query_embedding: query embedding
+    :param limit: number of rows to return
+    """
+
+    def func(conn, cursor):
         cursor.execute(
             f"""SELECT text, 1 - (embedding <=> %s::vector) AS similarity_score
             FROM {tbl_name}
@@ -76,10 +99,8 @@ def cosine_similarity_search(
             (query_embedding, query_embedding),
         )
         return cursor.fetchall()
-    finally:
-        if cursor:
-            cursor.close()
-        conn.close()
+
+    return __runnable(settings=settings, func=func)
 
 
 def add_record(
@@ -89,21 +110,14 @@ def add_record(
     vals: str,
     params: tuple | None = None,
 ):
-    conn = connect_pgl(settings=settings)
-    cursor = None
-
-    try:
-        cursor = conn.cursor()
-
+    def func(conn, cursor):
         if not params:
             cursor.execute(f"INSERT INTO {tbl_name} ({cols}) VALUES ({vals})")
         else:
             cursor.execute(f"INSERT INTO {tbl_name} ({cols}) VALUES ({vals})", params)
         conn.commit()
-    finally:
-        if cursor:
-            cursor.close()
-        conn.close()
+
+    __runnable(settings=settings, func=func)
 
 
 def add_records(
@@ -113,12 +127,7 @@ def add_records(
     vals: list[str],
     params: list[tuple | None] | None = None,
 ):
-    conn = connect_pgl(settings=settings)
-    cursor = None
-
-    try:
-        cursor = conn.cursor()
-
+    def func(conn, cursor):
         if not params:
             for val in vals:
                 cursor.execute(f"INSERT INTO {tbl_name} ({cols}) VALUES ({val})")
@@ -127,13 +136,11 @@ def add_records(
                 cursor.execute(f"INSERT INTO {tbl_name} ({cols}) VALUES ({val})", param)
 
         conn.commit()
-    finally:
-        if cursor:
-            cursor.close()
-        conn.close()
+
+    __runnable(settings=settings, func=func)
 
 
-# if __name__ == "__main__":
+# def main():
 #     settings = AzurePostgreSQLSettings.model_validate({})
 #     drop_table(settings=settings, tbl_name="test")
 #     create_table(
@@ -170,3 +177,7 @@ def add_records(
 #         query_embedding=query.data[0].embedding,
 #     )
 #     print(results)
+
+
+# if __name__ == "__main__":
+#     main()
