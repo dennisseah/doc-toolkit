@@ -56,6 +56,7 @@ markers = [
 omit = [
     "**/__init__.py",
     "samples/**",
+    "models/**",
     "services/**",
     "tests/*",
 ]
