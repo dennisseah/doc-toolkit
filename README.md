@@ -17,6 +17,15 @@ document toolkit
    1. Cmd-Shift-P type Show Recommended Extension. Install them
    2. open a terminal and type pre-commit install
 
+## Generate requirements.txt
+
+```sh
+poetry check
+poetry lock
+poetry export -f requirements.txt -o requirements.txt
+poetry export -f requirements.txt --with dev -o requirements.dev.txt
+```
+
 ## Samples
 
 Refer to [README.md](./samples/README.md)

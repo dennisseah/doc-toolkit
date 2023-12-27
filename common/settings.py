@@ -52,9 +52,9 @@ class AzurePostgreSQLSettings(BaseSettings):
         extra = "ignore"
 
 
-class AzureCognitiveSearchSettings(BaseSettings):
-    azure_cognitive_search_endpoint: str
-    azure_cognitive_search_key: str
+class BingSearchSettings(BaseSettings):
+    azure_bing_search_endpoint: str
+    azure_bing_search_key: str
 
     class Config:
         env_file = ".env"
