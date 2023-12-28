@@ -19,6 +19,7 @@ openai = "^1.3.8"
 rouge-score = "^0.1.2"
 psycopg2-binary = "^2.9.9"
 azure-cognitiveservices-search-websearch = "^2.0.0"
+azure-maps-search = "^1.0.0b2"
 
 
 [tool.poetry.group.dev.dependencies]

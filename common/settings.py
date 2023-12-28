@@ -61,6 +61,14 @@ class BingSearchSettings(BaseSettings):
         extra = "ignore"
 
 
+class AzureMapsSettings(BaseSettings):
+    azure_map_key: str
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+
 class Settings(FormRecognizerSettings, AzureBlobStorageSettings, AzureOpenAISettings):
     class Config:
         env_file = ".env"

@@ -265,6 +265,36 @@ typing-extensions = ">=4.6.0"
 aio = ["aiohttp (>=3.0)"]
 
 [[package]]
+name = "azure-maps-search"
+version = "1.0.0b2"
+description = "Microsoft Azure Maps Search Client Library for Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "azure-maps-search-1.0.0b2.zip", hash = "sha256:c4535390276e693c941ba3b3ea4155c15c09f7924514907347c7030997be14df"},
+    {file = "azure_maps_search-1.0.0b2-py3-none-any.whl", hash = "sha256:574993041578ba8e7f10856b0e4ea48002097a1d92c7b39559c31196934e2cb0"},
+]
+
+[package.dependencies]
+azure-common = ">=1.1,<2.0"
+azure-mgmt-core = ">=1.3.0,<2.0.0"
+msrest = ">=0.6.21"
+
+[[package]]
+name = "azure-mgmt-core"
+version = "1.4.0"
+description = "Microsoft Azure Management Core Library for Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "azure-mgmt-core-1.4.0.zip", hash = "sha256:d195208340094f98e5a6661b781cde6f6a051e79ce317caabd8ff97030a9b3ae"},
+    {file = "azure_mgmt_core-1.4.0-py3-none-any.whl", hash = "sha256:81071675f186a585555ef01816f2774d49c1c9024cb76e5720c3c0f6b337bb7d"},
+]
+
+[package.dependencies]
+azure-core = ">=1.26.2,<2.0.0"
+
+[[package]]
 name = "azure-storage-blob"
 version = "12.19.0"
 description = "Microsoft Azure Blob Storage Client Library for Python"
@@ -2142,4 +2172,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d0cdcd8032b2b9bdc1febc9d3c976e6e6e7e4b1d7fd8bdfb630c0e46b887b413"
+content-hash = "cfb984fdc678ddcbefb9689369a60f8d52f281cccc2a90db8f45bdad1f934003"

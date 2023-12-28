@@ -108,6 +108,12 @@ azure-common==1.1.28 ; python_version >= "3.10" and python_version < "4.0" \
 azure-core==1.29.6 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:13b485252ecd9384ae624894fe51cfa6220966207264c360beada239f88b738a \
     --hash=sha256:604a005bce6a49ba661bb7b2be84a9b169047e52fcfcd0a4e4770affab4178f7
+azure-maps-search==1.0.0b2 ; python_version >= "3.10" and python_version < "4.0" \
+    --hash=sha256:574993041578ba8e7f10856b0e4ea48002097a1d92c7b39559c31196934e2cb0 \
+    --hash=sha256:c4535390276e693c941ba3b3ea4155c15c09f7924514907347c7030997be14df
+azure-mgmt-core==1.4.0 ; python_version >= "3.10" and python_version < "4.0" \
+    --hash=sha256:81071675f186a585555ef01816f2774d49c1c9024cb76e5720c3c0f6b337bb7d \
+    --hash=sha256:d195208340094f98e5a6661b781cde6f6a051e79ce317caabd8ff97030a9b3ae
 azure-storage-blob==12.19.0 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:26c0a4320a34a3c2a1b74528ba6812ebcb632a04cd67b1c7377232c4b01a5897 \
     --hash=sha256:7bbc2c9c16678f7a420367fef6b172ba8730a7e66df7f4d7a55d5b3c8216615b
