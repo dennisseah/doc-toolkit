@@ -108,6 +108,9 @@ azure-common==1.1.28 ; python_version >= "3.10" and python_version < "4.0" \
 azure-core==1.29.6 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:13b485252ecd9384ae624894fe51cfa6220966207264c360beada239f88b738a \
     --hash=sha256:604a005bce6a49ba661bb7b2be84a9b169047e52fcfcd0a4e4770affab4178f7
+azure-maps-route==1.0.0b1 ; python_version >= "3.10" and python_version < "4.0" \
+    --hash=sha256:e946a39c6f40cf2b02c15298b8325307c75274016f628cdcb9d2a5910f8f26c7 \
+    --hash=sha256:f558f85af5807e3cce7f624c8ab002fdd9203769e1896b63c57e8ff72b3cd29d
 azure-maps-search==1.0.0b2 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:574993041578ba8e7f10856b0e4ea48002097a1d92c7b39559c31196934e2cb0 \
     --hash=sha256:c4535390276e693c941ba3b3ea4155c15c09f7924514907347c7030997be14df

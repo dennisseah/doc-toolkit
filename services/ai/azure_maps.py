@@ -1,7 +1,7 @@
 from typing import Any
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import MapsSearchClient
+from azure.maps.search.aio import MapsSearchClient
 from azure.maps.search.models import LatLon
 
 from common.settings import AzureMapsSettings
@@ -35,18 +35,20 @@ def get_client(settings: AzureMapsSettings) -> MapsSearchClient:
     )
 
 
-def search_address(settings: AzureMapsSettings, query: str) -> SearchAddressResult:
+async def search_address(
+    settings: AzureMapsSettings, query: str
+) -> SearchAddressResult:
     """Search address.
 
     :param settings: Azure Maps settings.
     :param query: Address query.
     """
     client = get_client(settings)
-    result = client.search_address(query=query)
+    result = await client.search_address(query=query)
     return SearchAddressResult(**to_dict(result))
 
 
-def search_nearby_point_of_interest(
+async def search_nearby_point_of_interest(
     settings: AzureMapsSettings, latlon: LatLon
 ) -> SearchAddressResult:
     """Search nearby point of interest.
@@ -55,14 +57,14 @@ def search_nearby_point_of_interest(
     :param latlon: Latitude and longitude.
     """
     client = get_client(settings)
-    result = client.search_nearby_point_of_interest(coordinates=latlon)
+    result = await client.search_nearby_point_of_interest(coordinates=latlon)
     return SearchAddressResult(**to_dict(result))
 
 
-# if __name__ == "__main__":
+# async def main():
 #     settings = AzureMapsSettings.model_validate({})
 
-#     result = search_address(
+#     result = await search_address(
 #         settings=settings, query="1045 La Avenida St, Mountain View, CA"
 #     )
 
@@ -76,3 +78,10 @@ def search_nearby_point_of_interest(
 #                 if r.address and r.additional_properties
 #             }
 #         )
+
+
+# if __name__ == "__main__":
+#     import asyncio
+
+#     loop = asyncio.get_event_loop()
+#     loop.run_until_complete(main())
