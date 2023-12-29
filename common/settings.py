@@ -30,6 +30,7 @@ class AzureOpenAISettings(BaseSettings):
     openai_api_version: str
     deployment_model: str
     openai_embedding_model: str
+    openai_dalle_model: str
     request_timeout: int = 30
     max_retry_time_secs: int = 32
     max_token_count: int | None = None

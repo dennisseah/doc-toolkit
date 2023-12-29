@@ -9,7 +9,7 @@ from openai import (
     AzureOpenAI,
     RateLimitError,
 )
-from openai.types import CreateEmbeddingResponse
+from openai.types import CreateEmbeddingResponse, ImagesResponse
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from common.settings import AzureOpenAISettings
@@ -108,3 +108,74 @@ def get_embedding(settings: AzureOpenAISettings, text: str) -> CreateEmbeddingRe
     result = client.embeddings.create(input=text, model=settings.openai_embedding_model)
     logging.info("completed get_embedding")
     return result
+
+
+def create_image(settings: AzureOpenAISettings, text: str) -> ImagesResponse:
+    logging.info("begin create_image")
+
+    client = AzureOpenAI(
+        api_key=settings.azure_openai_api_key,
+        azure_endpoint=settings.openai_azure_endpoint,
+        api_version=settings.openai_api_version,
+    )
+
+    result = client.images.generate(model=settings.openai_dalle_model, prompt=text, n=1)
+    logging.info("completed create_image")
+    return result
+
+
+# async def love_poem(settings: AzureOpenAISettings) -> str:
+#     from openai.types.chat import ChatCompletionSystemMessageParam
+
+#     completion = await get_completion(
+#         settings=settings,
+#         messages=[
+#             ChatCompletionSystemMessageParam(
+#                 content="Write a love poem",
+#                 role="system",
+#             )
+#         ],
+#     )
+#     return completion.choices[0].message.content.replace("\\n", "\n")  # type: ignore
+
+
+# def generate_embedding(settings: AzureOpenAISettings, text: str) -> list[float]:
+#     response = get_embedding(settings=settings, text=text)
+#     return response.data[0].embedding
+
+
+# def generate_image(settings: AzureOpenAISettings, text: str):
+#     import os
+
+#     import requests
+
+#     response = create_image(settings=settings, text=text)
+#     image_dir = os.path.join(os.curdir, ".images")
+
+#     # If the directory doesn't exist, create it
+#     if not os.path.isdir(image_dir):
+#         os.mkdir(image_dir)
+
+#     # Initialize the image path (note the filetype should be png)
+#     image_path = os.path.join(image_dir, "generated_image.png")
+
+#     # Retrieve the generated image
+#     image_url = response.data[0].url
+#     generated_image = requests.get(image_url).content  # type: ignore
+#     with open(image_path, "wb") as image_file:
+#         image_file.write(generated_image)
+
+
+# async def main():
+#     settings = AzureOpenAISettings.model_validate({})
+#     print(await love_poem(settings=settings))
+#     print(generate_embedding(settings=settings, text="hello world"))
+#     generate_image(
+#         settings=settings,
+#         text="Baby Yoda is the cutest thing in the galaxy.",
+#     )
+
+
+# if __name__ == "__main__":
+#     loop = asyncio.get_event_loop()
+#     loop.run_until_complete(main())
